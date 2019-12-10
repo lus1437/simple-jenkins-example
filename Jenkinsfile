@@ -18,17 +18,17 @@ pipeline {
         }
         stage('Quality'){
             environment{
-                scannerHome = tool 'test-sonar-scanner'
+                scannerHome = tool 'default-sonar-scanner'
             }
             steps{
-                withSonarQubeEnv('test-sonarQube'){
+                withSonarQubeEnv('DevOpsSonarQube'){
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
         }
         stage('Package'){
             steps{
-                nexusPublisher nexusInstanceId: 'test-nexus', nexusRepositoryId: 'releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/example-app-${BUILD_NUMBER}.jar']], mavenCoordinate: [artifactId: 'example-app', groupId: 'com.example.app', packaging: 'jar', version: '${BUILD_NUMBER}']]]
+                nexusPublisher nexusInstanceId: 'DevOpsNexus', nexusRepositoryId: 'releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/example-app-${BUILD_NUMBER}.jar']], mavenCoordinate: [artifactId: 'example-app', groupId: 'com.example.app', packaging: 'jar', version: '${BUILD_NUMBER}']]]
             }
         }
         stage('Deliver') {
